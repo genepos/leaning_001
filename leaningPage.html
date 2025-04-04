@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>jQuery メニュー＋コードコピー機能</title>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .menu {
+      width: 200px;
+      background-color: #f0f0f0;
+      padding: 20px;
+      box-sizing: border-box;
+      border-right: 1px solid #ccc;
+    }
+
+    .menu ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .menu li {
+      margin: 10px 0;
+      cursor: pointer;
+      color: #007BFF;
+    }
+
+    .menu li:hover {
+      text-decoration: underline;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    pre {
+      background-color: #282c34;
+      color: #fff;
+      padding: 15px;
+      overflow-x: auto;
+      border-radius: 5px;
+      margin-top: 10px;
+      position: relative;
+    }
+
+    code {
+      font-family: Consolas, Monaco, monospace;
+    }
+
+    /* コピー ボタン */
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #444;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      opacity: 0.8;
+    }
+
+    .copy-btn:hover {
+      opacity: 1;
+    }
+
+    .copied-msg {
+      color: green;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="menu">
+    <ul>
+      <li data-topic="javascript">JavaScriptについて</li>
+      <li data-topic="jquery">jQueryについて</li>
+      <li data-topic="ajax">Ajaxについて</li>
+      <li data-topic="api">APIについて</li>
+    </ul>
+  </div>
+  <div class="content" id="content-area">
+    <h2>ようこそ</h2>
+    <p>左のメニューから項目を選んでください。</p>
+  </div>
+</div>
+
+<script>
+  const contents = {
+    javascript: `
+      <h2>JavaScriptについて</h2>
+      <p>JavaScriptは、ウェブブラウザ上で動作するプログラミング言語です。</p>
+      <pre><button class="copy-btn">コピー</button><code class="language-javascript">
+// JavaScriptの基本構文
+function greet(name) {
+  alert("こんにちは、" + name + "さん！");
+}
+greet("太郎");
+      </code></pre>
+      <div class="copied-msg" style="display:none;">コピーしました！</div>
+    `,
+    jquery: `
+      <h2>jQueryについて</h2>
+      <p>jQueryはJavaScriptのライブラリで、DOM操作などが簡単に記述できます。</p>
+      <pre><button class="copy-btn">コピー</button><code class="language-javascript">
+// jQueryのクリックイベント
+$(document).ready(function() {
+  $('#btn').click(function() {
+    alert("クリックされました！");
+  });
+});
+      </code></pre>
+      <div class="copied-msg" style="display:none;">コピーしました！</div>
+    `,
+    ajax: `
+      <h2>Ajaxについて</h2>
+      <p>Ajaxはページを再読み込みせずに非同期通信ができます。</p>
+      <pre><button class="copy-btn">コピー</button><code class="language-javascript">
+// jQueryでのAjaxリクエスト
+$.ajax({
+  url: "data.json",
+  type: "GET",
+  dataType: "json",
+  success: function(data) {
+    console.log(data);
+  }
+});
+      </code></pre>
+      <div class="copied-msg" style="display:none;">コピーしました！</div>
+    `,
+    api: `
+      <h2>APIについて</h2>
+      <p>APIはシステム同士が情報をやりとりする仕組みです。</p>
+      <pre><button class="copy-btn">コピー</button><code class="language-javascript">
+// fetchでのAPI通信
+fetch("https://api.example.com/data")
+  .then(res => res.json())
+  .then(data => console.log(data));
+      </code></pre>
+      <div class="copied-msg" style="display:none;">コピーしました！</div>
+    `
+  };
+
+  $(function() {
+    $('.menu li').on('click', function () {
+      const topic = $(this).data('topic');
+      $('#content-area').html(contents[topic]);
+
+      // ハイライト適用
+      $('pre code').each(function (i, block) {
+        hljs.highlightElement(block);
+      });
+
+      // コピー機能のバインド
+      $('.copy-btn').on('click', function () {
+        const code = $(this).siblings('code').text();
+        navigator.clipboard.writeText(code).then(() => {
+          const msg = $(this).parent().next('.copied-msg');
+          msg.fadeIn(200).delay(1000).fadeOut(500);
+        });
+      });
+    });
+
+    hljs.highlightAll(); // 初期表示用
+  });
+</script>
+
+</body>
+</html>

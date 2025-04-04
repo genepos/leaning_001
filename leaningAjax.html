@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>郵便番号から住所検索</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    label { display: block; margin-top: 10px; }
+    input { padding: 5px; width: 300px; }
+  </style>
+</head>
+<body>
+
+  <h1>郵便番号から住所を自動入力</h1>
+
+  <label for="zipcode">郵便番号（ハイフンなし）:</label>
+  <input type="text" id="zipcode" placeholder="例: 1000001">
+  <button id="search">住所を検索</button>
+
+  <label for="address">住所:</label>
+  <input type="text" id="address">
+
+  <div id="message" style="color:red; margin-top:10px;"></div>
+
+  <script>
+    $(function() {
+      $('#search').on('click', function() {
+        const zipcode = $('#zipcode').val().trim();
+
+        if (!zipcode.match(/^\d{7}$/)) {
+          $('#message').text('郵便番号は7桁の数字で入力してください。');
+          $('#address').val('');
+          return;
+        }
+
+        $('#message').text('検索中...');
+
+        $.ajax({
+          url: 'https://zipcloud.ibsnet.co.jp/api/search',
+          type: 'GET',
+          dataType: 'jsonp', // JSONP を使うことでCORS制限を回避
+          data: { zipcode: zipcode },
+          success: function(response) {
+            if (response.results) {
+              const result = response.results[0];
+              const fullAddress = result.address1 + result.address2 + result.address3;
+              $('#address').val(fullAddress);
+              $('#message').text('');
+            } else {
+              $('#message').text('該当する住所が見つかりませんでした。');
+              $('#address').val('');
+            }
+          },
+          error: function() {
+            $('#message').text('通信エラーが発生しました。');
+            $('#address').val('');
+          }
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
