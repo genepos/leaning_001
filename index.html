@@ -7,25 +7,32 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function(){
+
+            /**
+             * 各ボタンにクリック時に動作する処理を追加する。
+             * ヒントは「4.イベント処理の基本」のよく使うイベントにあります。
+             **/
             // ① ボタンでテキストを変更
-            $("#changeTextBtn").click(function(){
+            $("#changeTextBtn").(function(){
                 $("#text").text("テキストが変更されました！");
             });
 
             // ② ボタンで要素を表示・非表示
-            $("#toggleBtn").click(function(){
+            $("#toggleBtn").(function(){
                 $("#box").toggle();
             });
 
             // ③ リストに項目を追加・削除
-            $("#addItemBtn").click(function(){
+            $("#addItemBtn").(function(){
                 let newItem = $("<li>新しい項目 <button class='removeItemBtn'>削除</button></li>");
-                $("#list").append(newItem);
+                // リストにnewItemを追加(append)する。
+                $("#list").
             });
 
             // 動的に追加された要素に対して削除ボタンの処理を適用
-            $(document).on("click", ".removeItemBtn", function(){
-                $(this).parent().remove();
+            $(document).on("", ".removeItemBtn", function(){
+                // 対象の要素に対して削除(remove)する。
+                $(this).parent().;
             });
         });
     </script>
