@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jQueryサンプル</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            // ① ボタンでテキストを変更
+            $("#changeTextBtn").click(function(){
+                $("#text").text("テキストが変更されました！");
+            });
+
+            // ② ボタンで要素を表示・非表示
+            $("#toggleBtn").click(function(){
+                $("#box").toggle();
+            });
+
+            // ③ リストに項目を追加・削除
+            $("#addItemBtn").click(function(){
+                let newItem = $("<li>新しい項目 <button class='removeItemBtn'>削除</button></li>");
+                $("#list").append(newItem);
+            });
+
+            // 動的に追加された要素に対して削除ボタンの処理を適用
+            $(document).on("click", ".removeItemBtn", function(){
+                $(this).parent().remove();
+            });
+        });
+    </script>
+    <style>
+        #box {
+            width: 100px;
+            height: 100px;
+            background-color: lightblue;
+            margin-top: 10px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>① ボタンでテキストを変更</h2>
+    <p id="text">このテキストが変更されます。</p>
+    <button id="changeTextBtn">テキスト変更</button>
+
+    <h2>② ボタンで要素を表示・非表示</h2>
+    <button id="toggleBtn">表示 / 非表示</button>
+    <div id="box"></div>
+
+    <h2>③ リストに項目を追加・削除</h2>
+    <button id="addItemBtn">項目を追加</button>
+    <ul id="list">
+        <li>項目1 <button class="removeItemBtn">削除</button></li>
+        <li>項目2 <button class="removeItemBtn">削除</button></li>
+    </ul>
+
+</body>
+</html>
