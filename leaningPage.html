@@ -2,20 +2,21 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>jQuery メニュー＋コードコピー機能</title>
+  <title>モダンUIのjQueryコードビューワー</title>
 
   <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <!-- Highlight.js -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 
   <style>
     body {
-      font-family: sans-serif;
       margin: 0;
-      padding: 0;
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      background-color: #f7f8fa;
+      color: #333;
     }
 
     .container {
@@ -24,11 +25,17 @@
     }
 
     .menu {
-      width: 200px;
-      background-color: #f0f0f0;
-      padding: 20px;
-      box-sizing: border-box;
-      border-right: 1px solid #ccc;
+      width: 220px;
+      background-color: #ffffff;
+      border-right: 1px solid #ddd;
+      padding: 30px 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.03);
+    }
+
+    .menu h3 {
+      font-size: 16px;
+      margin-bottom: 20px;
+      color: #888;
     }
 
     .menu ul {
@@ -37,53 +44,53 @@
     }
 
     .menu li {
-      margin: 10px 0;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 6px;
       cursor: pointer;
       color: #007BFF;
+      transition: background 0.2s;
     }
 
     .menu li:hover {
-      text-decoration: underline;
+      background-color: #e6f0ff;
     }
 
     .content {
       flex: 1;
-      padding: 20px;
-      box-sizing: border-box;
+      padding: 40px;
       overflow-y: auto;
     }
 
     h2 {
       margin-top: 0;
+      font-weight: 600;
+      font-size: 24px;
     }
 
     pre {
-      background-color: #282c34;
-      color: #fff;
-      padding: 15px;
-      overflow-x: auto;
-      border-radius: 5px;
-      margin-top: 10px;
       position: relative;
+      background-color: #0d1117;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      overflow-x: auto;
+      font-size: 14px;
     }
 
-    code {
-      font-family: Consolas, Monaco, monospace;
-    }
-
-    /* コピー ボタン */
     .copy-btn {
       position: absolute;
       top: 10px;
       right: 10px;
-      background: #444;
-      color: #fff;
+      background-color: #1f6feb;
+      color: white;
       border: none;
-      padding: 5px 10px;
-      font-size: 12px;
+      padding: 5px 12px;
       border-radius: 5px;
+      font-size: 12px;
       cursor: pointer;
       opacity: 0.8;
+      transition: opacity 0.2s;
     }
 
     .copy-btn:hover {
@@ -93,6 +100,17 @@
     .copied-msg {
       color: green;
       margin-top: 10px;
+      font-size: 13px;
+      display: none;
+    }
+
+    code {
+      font-family: 'Fira Code', 'Consolas', monospace;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -100,6 +118,7 @@
 
 <div class="container">
   <div class="menu">
+    <h3>メニュー</h3>
     <ul>
       <li data-topic="javascript">JavaScriptについて</li>
       <li data-topic="jquery">jQueryについて</li>
@@ -114,82 +133,118 @@
 </div>
 
 <script>
-  const contents = {
-    javascript: `
-      <h2>JavaScriptについて</h2>
-      <p>JavaScriptは、ウェブブラウザ上で動作するプログラミング言語です。</p>
-      <pre><button class="copy-btn">コピー</button><code class="language-javascript">
-// JavaScriptの基本構文
-function greet(name) {
-  alert("こんにちは、" + name + "さん！");
+const contents = {
+  javascript: `
+    <h2>JavaScriptについて</h2>
+    <p>JavaScriptはWebページを動的に操作するプログラミング言語です。</p>
+    <pre><button class="copy-btn">コピー</button><code class="language-javascript">
+// ユーザー入力を受け取り、挨拶する関数
+function greetUser() {
+  const name = prompt("あなたの名前は？");
+  if (name) {
+    alert(\`こんにちは、\${name}さん！\`);
+  } else {
+    alert("名前を入力してください！");
+  }
 }
-greet("太郎");
-      </code></pre>
-      <div class="copied-msg" style="display:none;">コピーしました！</div>
-    `,
-    jquery: `
-      <h2>jQueryについて</h2>
-      <p>jQueryはJavaScriptのライブラリで、DOM操作などが簡単に記述できます。</p>
-      <pre><button class="copy-btn">コピー</button><code class="language-javascript">
-// jQueryのクリックイベント
+
+// イベントリスナーの登録
+document.getElementById("startBtn").addEventListener("click", greetUser);
+    </code></pre>
+    <div class="copied-msg">コピーしました！</div>
+  `,
+
+  jquery: `
+    <h2>jQueryについて</h2>
+    <p>jQueryを使うとHTML要素の操作やイベント処理が簡単になります。</p>
+    <pre><button class="copy-btn">コピー</button><code class="language-javascript">
+// jQueryでのDOM操作とイベント処理
 $(document).ready(function() {
-  $('#btn').click(function() {
-    alert("クリックされました！");
+  // ボックスの表示/非表示
+  $('#toggleBtn').on('click', function() {
+    $('#box').slideToggle();
+  });
+
+  // リストに要素を追加し、クリックでイベント処理
+  $('#addItem').on('click', function() {
+    $('#list').append('<li class="item">新しい項目</li>');
+  });
+
+  // イベント委任
+  $('#list').on('click', '.item', function() {
+    alert($(this).text() + " がクリックされました");
   });
 });
-      </code></pre>
-      <div class="copied-msg" style="display:none;">コピーしました！</div>
-    `,
-    ajax: `
-      <h2>Ajaxについて</h2>
-      <p>Ajaxはページを再読み込みせずに非同期通信ができます。</p>
-      <pre><button class="copy-btn">コピー</button><code class="language-javascript">
-// jQueryでのAjaxリクエスト
-$.ajax({
-  url: "data.json",
-  type: "GET",
-  dataType: "json",
-  success: function(data) {
-    console.log(data);
-  }
-});
-      </code></pre>
-      <div class="copied-msg" style="display:none;">コピーしました！</div>
-    `,
-    api: `
-      <h2>APIについて</h2>
-      <p>APIはシステム同士が情報をやりとりする仕組みです。</p>
-      <pre><button class="copy-btn">コピー</button><code class="language-javascript">
-// fetchでのAPI通信
-fetch("https://api.example.com/data")
-  .then(res => res.json())
-  .then(data => console.log(data));
-      </code></pre>
-      <div class="copied-msg" style="display:none;">コピーしました！</div>
-    `
-  };
+    </code></pre>
+    <div class="copied-msg">コピーしました！</div>
+  `,
 
-  $(function() {
+  ajax: `
+    <h2>Ajaxについて</h2>
+    <p>Ajaxは、Webページをリロードせずにデータを取得できます。</p>
+    <pre><button class="copy-btn">コピー</button><code class="language-javascript">
+// JSONデータを非同期で取得し、リストとして表示
+$(document).ready(function() {
+  $.ajax({
+    url: "https://jsonplaceholder.typicode.com/users",
+    type: "GET",
+    dataType: "json",
+    success: function(data) {
+      const list = data.map(user => \`<li>\${user.name}</li>\`).join("");
+      $('#result').html("<ul>" + list + "</ul>");
+    },
+    error: function() {
+      $('#result').html("読み込みに失敗しました");
+    }
+  });
+});
+    </code></pre>
+    <div class="copied-msg">コピーしました！</div>
+  `,
+
+  api: `
+    <h2>APIについて</h2>
+    <p>APIは外部サービスとデータのやりとりを行うための仕組みです。</p>
+    <pre><button class="copy-btn">コピー</button><code class="language-javascript">
+// Open-Meteo APIを使って天気情報を取得（実用例）
+async function fetchWeather() {
+  try {
+    const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=35&longitude=139&hourly=temperature_2m");
+    const data = await res.json();
+    console.log("気温:", data.hourly.temperature_2m[0], "℃");
+  } catch (err) {
+    console.error("取得に失敗しました", err);
+  }
+}
+fetchWeather();
+    </code></pre>
+    <div class="copied-msg">コピーしました！</div>
+  `
+};
+
+
+
+  $(function () {
     $('.menu li').on('click', function () {
       const topic = $(this).data('topic');
       $('#content-area').html(contents[topic]);
 
       // ハイライト適用
-      $('pre code').each(function (i, block) {
+      $('pre code').each((i, block) => {
         hljs.highlightElement(block);
       });
 
-      // コピー機能のバインド
+      // コピー機能
       $('.copy-btn').on('click', function () {
         const code = $(this).siblings('code').text();
         navigator.clipboard.writeText(code).then(() => {
           const msg = $(this).parent().next('.copied-msg');
-          msg.fadeIn(200).delay(1000).fadeOut(500);
+          msg.fadeIn(200).delay(1000).fadeOut(400);
         });
       });
     });
 
-    hljs.highlightAll(); // 初期表示用
+    hljs.highlightAll(); // 初期
   });
 </script>
 
